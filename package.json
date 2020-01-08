@@ -11,6 +11,7 @@
     "axios": "^0.19.1",
     "babel-eslint": "^10.0.2",
     "babel-loader": "^8.0.6",
+    "babel-plugin-import": "^1.12.2",
     "cross-env": "^5.2.0",
     "css-loader": "^3.0.0",
     "dotenv": "^8.0.0",
@@ -47,7 +48,7 @@
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
-    "@babel/runtime": "7.0.0-beta.46",
+    "@babel/runtime": "^7.0.0-beta.46",
     "babel-plugin-dva-hmr": "^0.3.2",
     "eslint": "^4.14.0",
     "eslint-config-umi": "^0.1.1",
@@ -55,6 +56,7 @@
     "eslint-plugin-import": "^2.6.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0",
+    "husky": "^0.12.0",
     "redbox-react": "^1.4.3"
   }
 }
