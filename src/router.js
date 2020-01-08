@@ -3,14 +3,14 @@ import { Route, Switch, routerRedux, withRouter, Redirect } from 'dva/router';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import AppSwitch from './routes/AppSwitch';
-import IndexPage from './routes/IndexPage';
+import Login from './routes/Login';
 const { ConnectedRouter } = routerRedux;
 
 const routeComponent = [
-  { key: 'root', path: '/index', exact: true, component: IndexPage },
+  { key: 'root', path: '/login', exact: true, component: Login },
 ];
 const redirectComponent = [
-  { key: 'root', exact: true, to: '/index', From: '/' },
+  { key: 'root', exact: true, to: '/login', From: '/' },
 ];
 
 class Root extends Component {
