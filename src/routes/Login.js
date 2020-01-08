@@ -16,8 +16,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    POST_login(payload, callback, loading) {
-      dispatch({ type: 'login/POST_login', payload, callback, loading });
+    Login(payload, callback) {
+      dispatch({ type: 'auth/Login', payload, callback });
     },
     goToRoute(path) {
       dispatch(routerRedux.push(path));
@@ -36,7 +36,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
           <div className='backgroundCover'></div>
           <div className='loginFormBlock'>
             <div style={{ textAlign: 'center' }}>
-              <h1>POS</h1>
+              <h1>laravel_home_work</h1>
             </div>
             <LoginForm {...props} />
           </div>
@@ -59,7 +59,7 @@ const LoginForm = Form.create()(
     }
 
     handleSubmit = e => {
-      const { form, POST_login, goToRoute } = this.props;
+      const { form, Login, goToRoute } = this.props;
       e.preventDefault();
       form.validateFields((err, values) => {
         if (!err) {
@@ -73,7 +73,7 @@ const LoginForm = Form.create()(
             window.localStorage["password"] = '';
             window.localStorage["remember"] = false;
           }
-          POST_login({ account_number, password }, () => goToRoute('/index'));
+          Login({ account_number, password }, () => goToRoute('/index'));
         }
       });
     };
