@@ -10,11 +10,11 @@ import './GlobalLayout.less';
 const mapStateToProps = (state) => ({
   systemName: _.get(state, 'global.systemName'),
   copyright: _.get(state, 'global.copyright'),
-  users: _.get(state, 'users.users', []),
+  users: _.get(state, 'auth.token', []),
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  logOut_Users: (payload, callback, loading) => dispatch({ type: 'users/logOut_Users', payload, callback, loading }),
+
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(
@@ -34,12 +34,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(
       }/*, '(max-width: 1024px)' */);
     }
 
-    handleLogOut = () => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('ProductManage');
-      localStorage.removeItem('OrderStatusManage');
-      localStorage.removeItem('HRManage');
-      localStorage.removeItem('AccountsManage');
+    handleLogOut = async () => {
+      await localStorage.removeItem('token');
       this.props.history.push('/');
     }
 

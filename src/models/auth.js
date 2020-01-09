@@ -13,9 +13,8 @@ export default {
       try {
         const res = yield call(Login, payload);
         if (res) {
-          console.log(res);
-          // localStorage.setItem('token', JSON.stringify(res.jwtKey));
-          // yield put({ type: 'token_save' });
+          localStorage.setItem('token', JSON.stringify(res));
+          yield put({ type: 'token_save', payload: res });
         }
         if (res) { message.success('登入成功!') }
         if (callback) { callback(); }
@@ -23,12 +22,15 @@ export default {
         if (error) message.error('帳號密碼輸入錯誤!');
       }
     },
-  },
-
-  reducers: {
-    token_save(state, { payload }) {
-      return { ...state, token: payload };
+    *reLogin({ payload }, { put }) {  // eslint-disable-line
+      yield put({ type: 'token_save', payload });
     },
   },
 
-};
+    reducers: {
+      token_save(state, { payload }) {
+        return { ...state, token: payload };
+      },
+    },
+
+  };

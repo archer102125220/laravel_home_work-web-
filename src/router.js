@@ -42,13 +42,15 @@ const renderRoutes = (r, props) => {
 }
 const renderRedirects = (r, props) => {
   const { key, exact, to, From } = r;
+  const strToken = window.localStorage["token"];
+  console.log(strToken);
   return (
     <Redirect
       {...props}
       key={`redirect-${key}`}
       exact={exact}
       from={From}
-      to={to}
+      to={From === '/' && strToken !== undefined ? '/index' : to}
     />
   );
 }

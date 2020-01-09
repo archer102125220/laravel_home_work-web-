@@ -6,7 +6,7 @@ import './Login.less';
 const FormItem = Form.Item;
 
 if (window.localStorage["remember"] !== true && window.localStorage["remember"] !== 'true') {
-  window.localStorage["account_number"] = '';
+  window.localStorage["account"] = '';
   window.localStorage["password"] = '';
   window.localStorage["remember"] = false;
 }
@@ -14,16 +14,10 @@ if (window.localStorage["remember"] !== true && window.localStorage["remember"] 
 const mapStateToProps = (state) => ({
 });
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    Login(payload, callback) {
-      dispatch({ type: 'auth/Login', payload, callback });
-    },
-    goToRoute(path) {
-      dispatch(routerRedux.push(path));
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  Login: (payload, callback) => dispatch({ type: 'auth/Login', payload, callback }),
+  goToRoute: (path) => dispatch(routerRedux.push(path)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   class Login extends Component {
@@ -51,7 +45,7 @@ const LoginForm = Form.create()(
     componentDidMount = () => {
       if (window.localStorage["remember"] === true || window.localStorage["remember"] === 'true') {
         this.props.form.setFieldsValue({
-          account_number: window.localStorage["account_number"],
+          account: window.localStorage["account"],
           password: window.localStorage["password"],
           remember: true,
         });
@@ -63,17 +57,17 @@ const LoginForm = Form.create()(
       e.preventDefault();
       form.validateFields((err, values) => {
         if (!err) {
-          const { account_number, password, remember } = values;
+          const { account, password, remember } = values;
           if (remember === true) {
-            window.localStorage["account_number"] = account_number;
+            window.localStorage["account"] = account;
             window.localStorage["password"] = password;
             window.localStorage["remember"] = true;
           } else {
-            window.localStorage["account_number"] = '';
+            window.localStorage["account"] = '';
             window.localStorage["password"] = '';
             window.localStorage["remember"] = false;
           }
-          Login({ account_number, password }, () => goToRoute('/index'));
+          Login({ account, password }, () => goToRoute('/index'));
         }
       });
     };
@@ -85,7 +79,7 @@ const LoginForm = Form.create()(
         <Form onSubmit={this.handleSubmit} className='login-form'>
           <span>帳號</span>
           <FormItem>
-            {getFieldDecorator('account_number', {
+            {getFieldDecorator('account', {
               rules: [{ required: true, message: '請輸入你的帳號!' }]
             })(
               <Input

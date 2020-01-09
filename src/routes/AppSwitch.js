@@ -4,12 +4,13 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import GlobalLayout from './../layouts/GlobalLayout';
+
 const mapStateToProps = (state) => ({
-  users: _.get(state, 'users.users', []),
+  token: _.get(state, 'auth.token', []),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-
+  reLogin: (payload) => dispatch({ type: 'auth/reLogin', payload }),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(
   class AppSwitch extends Component {
@@ -17,7 +18,11 @@ export default connect(mapStateToProps, mapDispatchToProps)(
       const { props } = this;
       const { children, location } = props;
       const { pathname } = location;
-
+      // if (window.localStorage["token"] !== undefined) {
+      //   const strToken = window.localStorage["token"];
+      //   const token = strToken.substring(1, strToken.length - 1);
+      //   this.props.reLogin(token);
+      // }
       if (pathname.indexOf('/login') === 0) {
         return (
           <Switch {...props}>
