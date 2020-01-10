@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
+import { routerRedux, Link } from 'dva/router';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import './Login.less';
 const FormItem = Form.Item;
@@ -67,7 +67,7 @@ const LoginForm = Form.create()(
             window.localStorage["password"] = '';
             window.localStorage["remember"] = false;
           }
-          Login({ account, password }, () => goToRoute('/index'));
+          Login({ account, password }, () => goToRoute('/post'));
         }
       });
     };
@@ -105,9 +105,7 @@ const LoginForm = Form.create()(
               valuePropName: 'checked',
               initialValue: false
             })(<Checkbox>記住我</Checkbox>)}
-            {/* <a className='login-form-forgot' href=''>
-              忘記密碼?
-            </a> */}
+            <Link className='login-form-forgot' to='/register'>還沒有帳號?</Link>
             <Button
               type='primary'
               htmlType='submit'

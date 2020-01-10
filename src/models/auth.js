@@ -1,4 +1,4 @@
-import { Login } from '../services/auth';
+import { Login, Register } from '../services/auth';
 import { message } from 'antd';
 import _ from 'lodash';
 
@@ -25,12 +25,21 @@ export default {
     *reLogin({ payload }, { put }) {  // eslint-disable-line
       yield put({ type: 'token_save', payload });
     },
+    *Register({ payload, callback }, { call, put }) {  // eslint-disable-line
+      try {
+        const res = yield call(Register, payload);
+        if (res) { message.success('註冊成功!') }
+        if (callback) { callback(); }
+      } catch (error) {
+        if (error) message.error('帳號已重複!');
+      }
+    },
   },
 
-    reducers: {
-      token_save(state, { payload }) {
-        return { ...state, token: payload };
-      },
+  reducers: {
+    token_save(state, { payload }) {
+      return { ...state, token: payload };
     },
+  },
 
-  };
+};

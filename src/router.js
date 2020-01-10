@@ -4,13 +4,18 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import AppSwitch from './routes/AppSwitch';
 import Login from './routes/Login';
+import Register from './routes/Register';
+import PostList from './routes/PostList';
 const { ConnectedRouter } = routerRedux;
 
 const routeComponent = [
   { key: 'root', path: '/login', exact: true, component: Login },
+  { key: 'register', path: '/register', exact: true, component: Register },
+  { key: 'post_list', path: '/post/list', exact: true, component: PostList },
 ];
 const redirectComponent = [
   { key: 'root', exact: true, to: '/login', From: '/' },
+  { key: 'post_root', exact: true, to: '/post/list', From: '/post' },
 ];
 
 class Root extends Component {

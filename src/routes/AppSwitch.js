@@ -23,7 +23,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
       //   const token = strToken.substring(1, strToken.length - 1);
       //   this.props.reLogin(token);
       // }
-      if (pathname.indexOf('/login') === 0) {
+      if (pathname.indexOf('/login') === 0 || pathname.indexOf('/register') === 0 ) {
         return (
           <Switch {...props}>
             {children}
