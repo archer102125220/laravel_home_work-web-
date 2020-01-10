@@ -73,6 +73,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                         //     </div>
                         // }
                         renderItem={item => {
+                            console.log(item);
                             return (
                                 <Collapse showArrow={false} bordered={false} >
                                     <Panel header={
@@ -99,6 +100,14 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                                             {item.content}
                                         </List.Item>
                                     }>
+                                        {
+                                            ((item.comment || [])[0] || []).map(val => {
+                                                return (
+                                                    <List.Item key={`${val.posts_id}_${val.comment_id}`} >
+                                                        匿名回覆：{val.comment}
+                                                    </List.Item>)
+                                            })
+                                        }
 
                                     </Panel>
                                 </Collapse>
