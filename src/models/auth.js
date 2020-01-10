@@ -15,8 +15,8 @@ export default {
         if (res) {
           localStorage.setItem('token', JSON.stringify(res));
           yield put({ type: 'token_save', payload: res });
+          message.success('登入成功!');
         }
-        if (res) { message.success('登入成功!') }
         if (callback) { callback(); }
       } catch (error) {
         if (error) message.error('帳號密碼輸入錯誤!');
@@ -28,7 +28,7 @@ export default {
     *Register({ payload, callback }, { call, put }) {  // eslint-disable-line
       try {
         const res = yield call(Register, payload);
-        if (res) { message.success('註冊成功!') }
+        if (res) message.success('註冊成功!');
         if (callback) { callback(); }
       } catch (error) {
         if (error) message.error('帳號已重複!');
