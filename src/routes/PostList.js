@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { List, Avatar, Icon, Collapse } from 'antd';
+import { List, Avatar, Icon, Collapse, Button } from 'antd';
 import _ from 'lodash';
 
 const { Panel } = Collapse;
@@ -48,10 +48,10 @@ export default connect(mapStateToProps, mapDispatchToProps)(
             // }
 
             const IconText = ({ type, text }) => (
-                <span>
+                <Button>
                     <Icon type={type} style={{ marginRight: 8 }} />
                     {text}
-                </span>
+                </Button>
             );
 
             return (
@@ -79,11 +79,11 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                                     <Panel header={
                                         <List.Item
                                             key={item.posts_id}
-                                        // actions={[
-                                        //     <IconText type="star-o" text="156" key="list-vertical-star-o" />,
-                                        //     <IconText type="like-o" text="156" key="list-vertical-like-o" />,
-                                        //     <IconText type="message" text="2" key="list-vertical-message" />,
-                                        // ]}
+                                        actions={[
+                                            // <IconText type="star-o" text="156" key="list-vertical-star-o" />,
+                                            // <IconText type="like-o" text="156" key="list-vertical-like-o" />,
+                                            <IconText type="message" key="list-vertical-message" />,
+                                        ]}
                                         // extra={
                                         //     <img
                                         //         width={272}
