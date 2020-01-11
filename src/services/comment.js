@@ -15,3 +15,11 @@ export function POST_newComment(payload = {}, token) {
         }
     });
 }
+
+export function DELETE_comment(payload = {}, token) {
+    return fetch('DELETE', '/comment/delete_comment', payload, {
+        headers: {
+            Authorization: `Bearer ${token.replace(/\"/g, '')}`
+        }
+    });
+}

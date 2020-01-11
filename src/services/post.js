@@ -17,7 +17,6 @@ export function POST_newPost(payload = {}, token) {
 }
 
 export function DELETE_post(payload = {}, token) {
-    console.log('/post/delete_post', payload);
     return fetch('DELETE', '/post/delete_post', payload, {
         headers: {
             Authorization: `Bearer ${token.replace(/\"/g, '')}`

@@ -1,4 +1,4 @@
-import { GET_commentAll, POST_newComment } from '../services/comment';
+import { GET_commentAll, POST_newComment, DELETE_comment } from '../services/comment';
 import { message } from 'antd';
 import _ from 'lodash';
 
@@ -27,16 +27,33 @@ export default {
             try {
                 //const token = yield select(state => state.auth.token);
                 const token = yield localStorage.getItem('token');
-                const res = yield call(POST_newComment, payload, token);
+                yield call(POST_newComment, payload, token);
+                const res = yield call(GET_commentAll, payload, token);
 
                 if (res) {
-                    const res = yield call(GET_commentAll, payload, token);
+                    message.success('文章新稱成功!');
                     yield put({ type: 'comment_save', payload: res });
                 }
                 if (callback) { callback(false); }
             } catch (error) {
                 console.dir(error);
                 if (error) message.error('留言送出失敗!');
+            }
+        },
+        *DELETE_comment({ payload, callback }, { call, put /* , select */ }) {  // eslint-disable-line
+            try {
+                //const token = yield select(state => state.auth.token);
+                const token = yield localStorage.getItem('token');
+                yield call(DELETE_comment, payload, token);
+                const res = yield call(GET_commentAll, payload, token);
+                if (res) {
+                    message.success('留言刪除成功!');
+                    yield put({ type: 'comment_save', payload: res });
+                }
+                if (callback) { callback(false); }
+            } catch (error) {
+                console.dir(error);
+                if (error) message.error('留言刪除失敗!');
             }
         },
     },

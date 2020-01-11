@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { List, Avatar, Icon, Collapse, Button, Form, Input, Popconfirm } from 'antd';
+import { List, Icon, Collapse, Button, Form, Input, Popconfirm } from 'antd';
 import _ from 'lodash';
 
 const { TextArea } = Input;
@@ -16,6 +16,7 @@ const mapDispatchToProps = (dispatch) => ({
     POST_newComment: (payload, callback) => dispatch({ type: 'comment/POST_newComment', payload, callback }),
     POST_newPost: (payload, callback) => dispatch({ type: 'post/POST_newPost', payload, callback }),
     DELETE_post: (payload, callback) => dispatch({ type: 'post/DELETE_post', payload, callback }),
+    DELETE_comment: (payload, callback) => dispatch({ type: 'comment/DELETE_comment', payload, callback }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(
@@ -24,9 +25,11 @@ export default connect(mapStateToProps, mapDispatchToProps)(
             super(props);
             this.state = {
                 GET_postAllLoading: true,
-                submitting: false,
+                postSubmitting: false,
+                commentSubmitting: false,
                 comment: '',
                 post: '',
+                title: '',
             }
         }
 
@@ -40,7 +43,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
             const { POST_newComment } = this.props;
             const callback = bool => {
                 const handleGetPostAll = this.handleGetPostAll;
-                this.setState({ submitting: bool, }, handleGetPostAll);
+                this.setState({ commentSubmitting: bool, comment: '', }, handleGetPostAll);
             };
             await POST_newComment(payload, callback);
         }
@@ -49,31 +52,32 @@ export default connect(mapStateToProps, mapDispatchToProps)(
             const { POST_newPost } = this.props;
             const callback = bool => {
                 const handleGetPostAll = this.handleGetPostAll;
-                this.setState({ submitting: bool, }, handleGetPostAll);
+                this.setState({ postSubmitting: bool, post: '', title: '', }, handleGetPostAll);
             };
             await POST_newPost(payload, callback);
         }
 
         handleDeletePost = async (payload) => {
             const { DELETE_post } = this.props;
-            const callback = bool => {
-                const handleGetPostAll = this.handleGetPostAll;
-                this.setState({ submitting: bool, }, handleGetPostAll);
-            };
-            await DELETE_post({ posts_id: payload }, callback);
+            await DELETE_post({ posts_id: payload }, this.handleGetPostAll);
+        }
+
+        handleDeleteComment = async (payload) => {
+            const { DELETE_comment } = this.props;
+            await DELETE_comment({ comment_id: payload }, this.handleGetPostAll);
         }
 
         handleSubmit = (submitType, posts_id) => {
             if (submitType === 'comment') {
                 if (!this.state.comment || (this.state.comment || '').trim() === '') return;
                 this.setState({
-                    submitting: true,
+                    commentSubmitting: true,
                 });
                 this.handlePostNewComment({ content: this.state.comment, posts_id });
             } else if (submitType === 'post') {
                 if (!this.state.post || (this.state.post || '').trim() === '' || !this.state.title || (this.state.title || '').trim() === '') return;
                 this.setState({
-                    submitting: true,
+                    postSubmitting: true,
                 });
                 this.handlePostNewPost({ content: this.state.post, title: this.state.title });
             }
@@ -86,7 +90,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
 
         render() {
             const { postAll } = this.props;
-            const { GET_postAllLoading, submitting, comment, title, post } = this.state;
+            const { GET_postAllLoading, postSubmitting, commentSubmitting, comment, title, post } = this.state;
 
             return (
                 <div>
@@ -96,7 +100,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                             新文章：<TextArea rows={4} onChange={e => this.setState({ post: e.target.value })} value={post} />
                         </Form.Item>
                         <Form.Item>
-                            <Button htmlType='submit' loading={submitting} onClick={() => this.handleSubmit('post')} type='primary'>
+                            <Button htmlType='submit' loading={postSubmitting} onClick={() => this.handleSubmit('post')} type='primary'>
                                 送出文章
                             </Button>
                         </Form.Item>
@@ -117,7 +121,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                                             key={item.posts_id}
                                             actions={[
 
-                                                <Icon type='message' style={{ marginRight: 8 }} />,
+                                                <Button style={{ marginRight: 8 }} ><Icon type='message' /></Button>,
                                                 <Popconfirm
                                                     title={`您確定要刪除嗎?`}
                                                     onConfirm={() => this.handleDeletePost(item.posts_id)}
@@ -125,8 +129,11 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                                                     okText='是'
                                                     cancelText='否'
                                                 >
-                                                    <Icon type='delete' style={{ marginRight: 8 }} />
+                                                    <Button style={{ marginRight: 8 }} >
+                                                        <Icon type='delete' />
+                                                    </Button>
                                                 </Popconfirm>,
+                                                <Button onClick={() => console.log(123)} style={{ marginRight: 8 }} ><Icon type='edit' /></Button>,
                                             ]}
                                         >
                                             <div>{item.name}：{item.title}</div>
@@ -139,6 +146,17 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                                                 return (
                                                     <List.Item key={`${val.posts_id}_${val.comment_id}`} >
                                                         匿名回覆：{val.comment}
+                                                        <Popconfirm
+                                                            title={`您確定要刪除嗎?`}
+                                                            onConfirm={() => this.handleDeleteComment(val.comment_id)}
+                                                            onCancel={null}
+                                                            okText='是'
+                                                            cancelText='否'
+                                                        >
+                                                            <Button style={{ marginLeft: 8 }} >
+                                                                <Icon type='delete' />
+                                                            </Button>
+                                                        </Popconfirm>
                                                     </List.Item>)
                                             })
                                         }
@@ -147,7 +165,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                                                 新增留言：<TextArea rows={4} onChange={e => this.setState({ comment: e.target.value })} value={comment} />
                                             </Form.Item>
                                             <Form.Item>
-                                                <Button htmlType='submit' loading={submitting} onClick={() => this.handleSubmit('comment', item.posts_id)} type='primary'>
+                                                <Button htmlType='submit' loading={commentSubmitting} onClick={() => this.handleSubmit('comment', item.posts_id)} type='primary'>
                                                     送出留言
                                                 </Button>
                                             </Form.Item>

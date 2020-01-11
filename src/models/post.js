@@ -30,6 +30,7 @@ export default {
                 yield call(POST_newPost, payload, token);
                 const res = yield call(GET_postAll, payload, token);
                 if (res) {
+                    message.success('文章新增成功!');
                     yield put({ type: 'post_save', payload: res });
                 }
                 if (callback) { callback(false); }
@@ -45,11 +46,12 @@ export default {
                 yield call(DELETE_post, payload, token);
                 const res = yield call(GET_postAll, payload, token);
                 if (res) {
+                    message.success('文章刪除成功!');
                     yield put({ type: 'post_save', payload: res });
                 }
                 if (callback) { callback(false); }
             } catch (error) {
-                console.dir(error);
+                // console.dir(error);
                 if (error) message.error('文章刪除失敗!');
             }
         },
