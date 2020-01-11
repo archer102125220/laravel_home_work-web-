@@ -54,7 +54,7 @@ const renderRedirects = (r, props) => {
       key={`redirect-${key}`}
       exact={exact}
       from={From}
-      to={From === '/' && strToken !== undefined ? '/post' : to}
+      to={From === '/' && strToken !== undefined && strToken !== '' ? '/post' : to}
     />
   );
 }

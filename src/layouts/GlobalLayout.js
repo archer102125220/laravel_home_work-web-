@@ -35,6 +35,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(
     }
 
     handleLogOut = async () => {
+      window.localStorage["token"] = '';
+      await localStorage.setItem('token', '');
       await localStorage.removeItem('token');
       this.props.history.push('/');
     }

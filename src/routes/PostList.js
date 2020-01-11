@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { List, Avatar, Icon, Collapse, Button } from 'antd';
+import { List, Avatar, Icon, Collapse, Button, Form, Input } from 'antd';
 import _ from 'lodash';
+
+const { TextArea } = Input;
 
 const { Panel } = Collapse;
 
@@ -11,6 +13,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     GET_postAll: (callback) => dispatch({ type: 'post/GET_postAll', callback }),
+    POST_newComment: (payload, callback) => dispatch({ type: 'comment/POST_newComment', payload, callback }),
+    POST_newPost: (payload, callback) => dispatch({ type: 'post/POST_newPost', payload, callback }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(
@@ -19,6 +23,9 @@ export default connect(mapStateToProps, mapDispatchToProps)(
             super(props);
             this.state = {
                 GET_postAllLoading: true,
+                submitting: false,
+                comment: '',
+                post: '',
             }
         }
 
@@ -28,13 +35,48 @@ export default connect(mapStateToProps, mapDispatchToProps)(
             await GET_postAll(loading);
         }
 
+        handlePostNewComment = async (payload) => {
+            const { POST_newComment } = this.props;
+            const callback = bool => {
+                const handleGetPostAll = this.handleGetPostAll;
+                this.setState({ submitting: bool, }, handleGetPostAll);
+            };
+            await POST_newComment(payload, callback);
+        }
+
+        handlePostNewPost = async (payload) => {
+            const { POST_newPost } = this.props;
+            const callback = bool => {
+                const handleGetPostAll = this.handleGetPostAll;
+                this.setState({ submitting: bool, }, handleGetPostAll);
+            };
+            await POST_newPost(payload, callback);
+        }
+
+        handleSubmit = (submitType, posts_id) => {
+            if (submitType === 'comment') {
+                if (!this.state.comment || (this.state.comment || '').trim() === '') return;
+                this.setState({
+                    submitting: true,
+                });
+                this.handlePostNewComment({ content: this.state.comment, posts_id });
+            } else if (submitType === 'post') {
+                if (!this.state.post || (this.state.post || '').trim() === '' || !this.state.title || (this.state.title || '').trim() === '') return;
+                this.setState({
+                    submitting: true,
+                });
+                this.handlePostNewPost({ content: this.state.post, title: this.state.title });
+            }
+
+        };
+
         componentDidMount = () => {
             this.handleGetPostAll();
         }
 
         render() {
             const { postAll } = this.props;
-            const { GET_postAllLoading } = this.state;
+            const { GET_postAllLoading, submitting, comment, title, post } = this.state;
             // const listData = [];
             // for (let i = 0; i < 23; i++) {
             //     listData.push({
@@ -56,6 +98,17 @@ export default connect(mapStateToProps, mapDispatchToProps)(
 
             return (
                 <div>
+                    <div>
+                        <Form.Item>
+                            新文章標題：<Input onChange={e => this.setState({ title: e.target.value })} value={title} />
+                            新文章：<TextArea rows={4} onChange={e => this.setState({ post: e.target.value })} value={post} />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button htmlType="submit" loading={submitting} onClick={() => this.handleSubmit('post')} type="primary">
+                                送出文章
+                            </Button>
+                        </Form.Item>
+                    </div>
                     <List
                         itemLayout="vertical"
                         size="large"
@@ -73,17 +126,16 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                         //     </div>
                         // }
                         renderItem={item => {
-                            console.log(item);
                             return (
                                 <Collapse showArrow={false} bordered={false} >
                                     <Panel header={
                                         <List.Item
                                             key={item.posts_id}
-                                        actions={[
-                                            // <IconText type="star-o" text="156" key="list-vertical-star-o" />,
-                                            // <IconText type="like-o" text="156" key="list-vertical-like-o" />,
-                                            <IconText type="message" key="list-vertical-message" />,
-                                        ]}
+                                            actions={[
+                                                // <IconText type="star-o" text="156" key="list-vertical-star-o" />,
+                                                // <IconText type="like-o" text="156" key="list-vertical-like-o" />,
+                                                <IconText type="message" key="list-vertical-message" />,
+                                            ]}
                                         // extra={
                                         //     <img
                                         //         width={272}
@@ -108,7 +160,16 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                                                     </List.Item>)
                                             })
                                         }
-
+                                        <div>
+                                            <Form.Item>
+                                                新增留言：<TextArea rows={4} onChange={e => this.setState({ comment: e.target.value })} value={comment} />
+                                            </Form.Item>
+                                            <Form.Item>
+                                                <Button htmlType="submit" loading={submitting} onClick={() => this.handleSubmit('comment', item.posts_id)} type="primary">
+                                                    送出留言
+                                                </Button>
+                                            </Form.Item>
+                                        </div>
                                     </Panel>
                                 </Collapse>
                             )
