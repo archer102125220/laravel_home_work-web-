@@ -24,7 +24,7 @@ function fetch(_method = 'GET', url, _params = {}, _extendOption = {}) {
   let params = {};
   // method.match(/GET/)  //match比對完的結果會回傳一個OBJ，而屬性input則為method的值，故 字串.match(正規表示).input 可用於switch-case裡面
   switch (method) {
-    case (method.match(/POST|PUT|PATCH/) || {}).input:
+    case (method.match(/POST|PUT|PATCH|DELETE/) || {}).input:
       params.data = _params;
       break;
     case (method.match(/GET/) || {}).input:

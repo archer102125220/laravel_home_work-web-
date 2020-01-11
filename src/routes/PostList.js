@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { List, Avatar, Icon, Collapse, Button, Form, Input } from 'antd';
+import { List, Avatar, Icon, Collapse, Button, Form, Input, Popconfirm } from 'antd';
 import _ from 'lodash';
 
 const { TextArea } = Input;
@@ -15,6 +15,7 @@ const mapDispatchToProps = (dispatch) => ({
     GET_postAll: (callback) => dispatch({ type: 'post/GET_postAll', callback }),
     POST_newComment: (payload, callback) => dispatch({ type: 'comment/POST_newComment', payload, callback }),
     POST_newPost: (payload, callback) => dispatch({ type: 'post/POST_newPost', payload, callback }),
+    DELETE_post: (payload, callback) => dispatch({ type: 'post/DELETE_post', payload, callback }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(
@@ -53,6 +54,15 @@ export default connect(mapStateToProps, mapDispatchToProps)(
             await POST_newPost(payload, callback);
         }
 
+        handleDeletePost = async (payload) => {
+            const { DELETE_post } = this.props;
+            const callback = bool => {
+                const handleGetPostAll = this.handleGetPostAll;
+                this.setState({ submitting: bool, }, handleGetPostAll);
+            };
+            await DELETE_post({ posts_id: payload }, callback);
+        }
+
         handleSubmit = (submitType, posts_id) => {
             if (submitType === 'comment') {
                 if (!this.state.comment || (this.state.comment || '').trim() === '') return;
@@ -77,24 +87,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(
         render() {
             const { postAll } = this.props;
             const { GET_postAllLoading, submitting, comment, title, post } = this.state;
-            // const listData = [];
-            // for (let i = 0; i < 23; i++) {
-            //     listData.push({
-            //         title: `ant design part ${i}`,
-            //         avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            //         description:
-            //             'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-            //         content:
-            //             'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-            //     });
-            // }
-
-            const IconText = ({ type, text }) => (
-                <Button>
-                    <Icon type={type} style={{ marginRight: 8 }} />
-                    {text}
-                </Button>
-            );
 
             return (
                 <div>
@@ -104,27 +96,19 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                             新文章：<TextArea rows={4} onChange={e => this.setState({ post: e.target.value })} value={post} />
                         </Form.Item>
                         <Form.Item>
-                            <Button htmlType="submit" loading={submitting} onClick={() => this.handleSubmit('post')} type="primary">
+                            <Button htmlType='submit' loading={submitting} onClick={() => this.handleSubmit('post')} type='primary'>
                                 送出文章
                             </Button>
                         </Form.Item>
                     </div>
                     <List
-                        itemLayout="vertical"
-                        size="large"
+                        itemLayout='vertical'
+                        size='large'
                         pagination={{
-                            // onChange: page => {
-                            //     console.log(page);
-                            // },
                             pageSize: 3,
                         }}
                         dataSource={postAll}
                         loading={GET_postAllLoading}
-                        // footer={
-                        //     <div>
-                        //         <b>ant design</b> footer part
-                        //     </div>
-                        // }
                         renderItem={item => {
                             return (
                                 <Collapse showArrow={false} bordered={false} >
@@ -132,26 +116,24 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                                         <List.Item
                                             key={item.posts_id}
                                             actions={[
-                                                // <IconText type="star-o" text="156" key="list-vertical-star-o" />,
-                                                // <IconText type="like-o" text="156" key="list-vertical-like-o" />,
-                                                <IconText type="message" key="list-vertical-message" />,
+
+                                                <Icon type='message' style={{ marginRight: 8 }} />,
+                                                <Popconfirm
+                                                    title={`您確定要刪除嗎?`}
+                                                    onConfirm={() => this.handleDeletePost(item.posts_id)}
+                                                    onCancel={null}
+                                                    okText='是'
+                                                    cancelText='否'
+                                                >
+                                                    <Icon type='delete' style={{ marginRight: 8 }} />
+                                                </Popconfirm>,
                                             ]}
-                                        // extra={
-                                        //     <img
-                                        //         width={272}
-                                        //         alt="logo"
-                                        //         src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                                        //     />
-                                        // }
                                         >
-                                            {/* <List.Item.Meta
-                                                avatar={<Avatar src={item.avatar} />}
-                                                title={`${item.name}：${item.title}`}
-                                            /> */}
                                             <div>{item.name}：{item.title}</div>
                                             {item.content}
                                         </List.Item>
                                     }>
+
                                         {
                                             ((item.comment || [])[0] || []).map(val => {
                                                 return (
@@ -165,7 +147,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
                                                 新增留言：<TextArea rows={4} onChange={e => this.setState({ comment: e.target.value })} value={comment} />
                                             </Form.Item>
                                             <Form.Item>
-                                                <Button htmlType="submit" loading={submitting} onClick={() => this.handleSubmit('comment', item.posts_id)} type="primary">
+                                                <Button htmlType='submit' loading={submitting} onClick={() => this.handleSubmit('comment', item.posts_id)} type='primary'>
                                                     送出留言
                                                 </Button>
                                             </Form.Item>
