@@ -1,4 +1,4 @@
-import { GET_commentAll, POST_newComment, DELETE_comment } from '../services/comment';
+import { GET_commentAll, POST_newComment, DELETE_comment, PUT_comment } from '../services/comment';
 import { message } from 'antd';
 import _ from 'lodash';
 
@@ -20,7 +20,7 @@ export default {
                 }
                 if (callback) { callback(false); }
             } catch (error) {
-                if (error) message.error('文章列表載入失敗!');
+                if (error) message.error('留言列表載入失敗!');
             }
         },
         *POST_newComment({ payload, callback }, { call, put /* , select */ }) {  // eslint-disable-line
@@ -31,7 +31,7 @@ export default {
                 const res = yield call(GET_commentAll, payload, token);
 
                 if (res) {
-                    message.success('文章新稱成功!');
+                    message.success('留言新稱成功!');
                     yield put({ type: 'comment_save', payload: res });
                 }
                 if (callback) { callback(false); }
@@ -54,6 +54,23 @@ export default {
             } catch (error) {
                 console.dir(error);
                 if (error) message.error('留言刪除失敗!');
+            }
+        },
+        *PUT_comment({ payload, comment_id, callback }, { call, put /* , select */ }) {  // eslint-disable-line
+            try {
+                //const token = yield select(state => state.auth.token);
+                const token = yield localStorage.getItem('token');
+                yield call(PUT_comment, payload, comment_id, token);
+                const res = yield call(GET_commentAll, payload, token);
+
+                if (res) {
+                    message.success('留言修改成功!');
+                    yield put({ type: 'comment_save', payload: res });
+                }
+                if (callback) { callback(false); }
+            } catch (error) {
+                console.dir(error);
+                if (error) message.error('留言修改失敗!');
             }
         },
     },

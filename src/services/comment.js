@@ -23,3 +23,11 @@ export function DELETE_comment(payload = {}, token) {
         }
     });
 }
+
+export function PUT_comment(payload = {}, comment_id, token) {
+    return fetch('PUT', `/comment/edit/${comment_id}`, payload, {
+        headers: {
+            Authorization: `Bearer ${token.replace(/\"/g, '')}`
+        }
+    });
+}
