@@ -1,6 +1,5 @@
 import { GET_commentAll, POST_newComment, DELETE_comment, PUT_comment } from '../services/comment';
 import { message } from 'antd';
-import _ from 'lodash';
 
 export default {
 

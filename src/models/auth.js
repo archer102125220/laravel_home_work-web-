@@ -1,6 +1,5 @@
 import { Login, Register } from '../services/auth';
 import { message } from 'antd';
-import _ from 'lodash';
 
 export default {
 

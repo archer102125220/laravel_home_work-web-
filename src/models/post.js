@@ -1,6 +1,5 @@
 import { GET_postAll, POST_newPost, DELETE_post, PUT_post } from '../services/post';
 import { message } from 'antd';
-import _ from 'lodash';
 
 export default {
 
